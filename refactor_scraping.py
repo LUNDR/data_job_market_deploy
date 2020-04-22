@@ -20,9 +20,6 @@ import boto3
 
 from config import ACCESS_KEY,SECRET_KEY
 
-text_file = open("jobs_list.txt", "r")
-list1 = text_file.readlines()
-jobs_list = [x.split('\n')[0] for x in list1]
 
 
 def s3_upload(access_key,secret_key, write_path):
@@ -307,6 +304,10 @@ if __name__ == "__main__":
     #Define variables
     
     st = dt.now()
+    
+    text_file = open("jobs_list.txt", "r")
+    list1 = text_file.readlines()
+    jobs_list = [x.split('\n')[0] for x in list1]
     
     jobs = jobs_list
     
