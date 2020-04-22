@@ -7,7 +7,6 @@ Script to scrape indeed uk and push into database
 
 import pandas as pd
 import requests, bs4, time
-import pandas as pd
 import os
 from itertools import cycle
 import traceback
@@ -20,6 +19,11 @@ import boto3
 
 
 from config import ACCESS_KEY,SECRET_KEY
+
+text_file = open("jobs_list.txt", "r")
+list1 = text_file.readlines()
+jobs_list = [x.split('\n')[0] for x in list1]
+
 
 def s3_upload(access_key,secret_key, write_path):
 
@@ -74,10 +78,10 @@ class indeed_scrape_uk:
     def job_title(self): 
         jobs = []
         for div in self.soup.find_all(name="div", attrs={"class":"row"}):
-             try:
-                 for a in div.find_all(name="a", attrs={"data-tn-element":"jobTitle"}):
+            try:
+                for a in div.find_all(name="a", attrs={"data-tn-element":"jobTitle"}):
                     jobs.append(a["title"])
-             except:
+            except:
                    jobs.append("Nothing_found")
         return jobs
  
@@ -180,8 +184,8 @@ class indeed_scrape_uk:
         for i in range(len(salary)):
             try:
 
-                 a = salary[i].split(" - ", 1)[0]
-                 a = self.clean_salary_GBP(a)
+                a = salary[i].split(" - ", 1)[0]
+                a = self.clean_salary_GBP(a)
 
             except:
                 a = 'None'
@@ -304,26 +308,9 @@ if __name__ == "__main__":
     
     st = dt.now()
     
-    jobs =  ['data+science',
-             'data+analyst',
-             'business+intelligence',
-             'data+engineer',
-             'AI Scientist',
-             'Machine+Learning+Engineer',
-             'database+developer',
-             'solutions+architect',
-             'insight+analytics',
-             'database+administrator',
-             'analytics',
-             'data+security',
-             'CRM+manager',
-             'data+manager',
-             'econometrics',
-             'statistics']
+    jobs = jobs_list
     
-    for searchTerm in jobs:
-        print(searchTerm)
-        master_df = pd.DataFrame(columns = ['company' , 
+    master_df = pd.DataFrame(columns = ['company' , 
                                                      'job_title',
                                                      'salary',
                                                      'location',
@@ -336,7 +323,11 @@ if __name__ == "__main__":
                                                      'salary_type',
                                                      'salary_average',
                                                      'other_deets'])
-        
+    
+    
+    for searchTerm in jobs:
+        print(searchTerm)
+
         for i in range(0,1000,10):
             print(i)
             time.sleep(1) #ensuring at least 1 second between page grabs
@@ -376,20 +367,21 @@ if __name__ == "__main__":
         
             df = pd.DataFrame.from_dict(dict(zip(columns, cols)))
             master_df = master_df.append(df, ignore_index=True)
+        master_df.drop_duplicates(subset ='description',inplace = True)
         
-        master_df = master_df.replace({'\n':''}, regex=True)
-        current_path = os.getcwd()
-        filename='Indeed_UK_scrape_'+searchTerm+'_'+str(date.today())+'.tsv'
-        master_df.to_csv(filename,sep='\t', mode='w', encoding = 'UTF-8')
+    master_df = master_df.replace({'\n':''}, regex=True)
+    current_path = os.getcwd()
+    filename='Indeed_UK_scrape_'+str(date.today())+'.tsv'
+    master_df.to_csv(filename,sep='\t', mode='w', encoding = 'UTF-8')
                
         
-        access_key = ACCESS_KEY
-        secret_key = SECRET_KEY
+    access_key = ACCESS_KEY
+    secret_key = SECRET_KEY
         
-        s3_upload(access_key,secret_key, filename)  
+    s3_upload(access_key,secret_key, filename)  
          
-        os.remove(filename)
-        print(dt.now() - st)
+    os.remove(filename)
+    print(dt.now() - st)
           
           
           
