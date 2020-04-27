@@ -311,7 +311,11 @@ if __name__ == "__main__":
     
     jobs = jobs_list
     
-    master_df = pd.DataFrame(columns = ['company' , 
+
+    
+    for searchTerm in jobs:
+        print(searchTerm)
+        master_df = pd.DataFrame(columns = ['company' , 
                                                      'job_title',
                                                      'salary',
                                                      'location',
@@ -325,9 +329,6 @@ if __name__ == "__main__":
                                                      'salary_average',
                                                      'other_deets'])
     
-    
-    for searchTerm in jobs:
-        print(searchTerm)
 
         for i in range(0,1000,10):
             print(i)
@@ -368,21 +369,21 @@ if __name__ == "__main__":
         
             df = pd.DataFrame.from_dict(dict(zip(columns, cols)))
             master_df = master_df.append(df, ignore_index=True)
-        master_df.drop_duplicates(subset ='description',inplace = True)
+            master_df.drop_duplicates(subset ='description',inplace = True)
         
-    master_df = master_df.replace({'\n':''}, regex=True)
-    current_path = os.getcwd()
-    filename='Indeed_UK_scrape_'+str(date.today())+'.tsv'
-    master_df.to_csv(filename,sep='\t', mode='w', encoding = 'UTF-8')
-               
-        
-    access_key = ACCESS_KEY
-    secret_key = SECRET_KEY
-        
-    s3_upload(access_key,secret_key, filename)  
+        master_df = master_df.replace({'\n':''}, regex=True)
+        current_path = os.getcwd()
+        filename='Indeed_UK_scrape_'+searchTerm+'_'+str(date.today())+'.tsv'
+        master_df.to_csv(filename,sep='\t', mode='w', encoding = 'UTF-8')
+                   
+            
+        access_key = ACCESS_KEY
+        secret_key = SECRET_KEY
+            
+        s3_upload(access_key,secret_key, filename)  
          
-    os.remove(filename)
-    print(dt.now() - st)
+        os.remove(filename)
+        print(dt.now() - st)
           
           
           
