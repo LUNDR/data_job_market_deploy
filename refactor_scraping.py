@@ -331,45 +331,48 @@ if __name__ == "__main__":
     
 
         for i in range(0,1000,10):
-            print(i)
-            time.sleep(1) #ensuring at least 1 second between page grabs
-            url = "https://www.indeed.co.uk/jobs?q="+searchTerm+"&sort=date&filter=0&l="+"&start="+str(i)
-            a = indeed_scrape_uk(url)
+            try:
+                print(i)
+                time.sleep(1) #ensuring at least 1 second between page grabs
+                url = "https://www.indeed.co.uk/jobs?q="+searchTerm+"&sort=date&filter=0&l="+"&start="+str(i)
+                a = indeed_scrape_uk(url)
+                
             
-        
-            cols = [a.company(),
-                a.job_title(), 
-                a.salary(),
-                a.location(),
-                a.description(), 
-                a.imputed_posted_date(), 
-                a.extraction_date(),
-                a.full_desc(),
-                a.salary_split()[0],
-                a.salary_split()[1],
-                a.salary_split()[2],
-                a.salary_average(),
-                a.headline()]
- 
-
-        
-            columns = ['company' , 
-                                                     'job_title',
-                                                     'salary',
-                                                     'location',
-                                                     'description',
-                                                     'posting_date',
-                                                     'extraction_date',
-                                                     'full_description',                                                    
-                                                     'salary_low',
-                                                     'salary_high',
-                                                     'salary_type',
-                                                     'salary_average',
-                                                     'other_deets']
-        
-            df = pd.DataFrame.from_dict(dict(zip(columns, cols)))
-            master_df = master_df.append(df, ignore_index=True)
-            master_df.drop_duplicates(subset ='description',inplace = True)
+                cols = [a.company(),
+                    a.job_title(), 
+                    a.salary(),
+                    a.location(),
+                    a.description(), 
+                    a.imputed_posted_date(), 
+                    a.extraction_date(),
+                    a.full_desc(),
+                    a.salary_split()[0],
+                    a.salary_split()[1],
+                    a.salary_split()[2],
+                    a.salary_average(),
+                    a.headline()]
+     
+    
+            
+                columns = ['company' , 
+                                                         'job_title',
+                                                         'salary',
+                                                         'location',
+                                                         'description',
+                                                         'posting_date',
+                                                         'extraction_date',
+                                                         'full_description',                                                    
+                                                         'salary_low',
+                                                         'salary_high',
+                                                         'salary_type',
+                                                         'salary_average',
+                                                         'other_deets']
+            
+                df = pd.DataFrame.from_dict(dict(zip(columns, cols)))
+                master_df = master_df.append(df, ignore_index=True)
+                master_df.drop_duplicates(subset ='description',inplace = True)
+            except:
+                pass
         
         master_df = master_df.replace({'\n':''}, regex=True)
         current_path = os.getcwd()
