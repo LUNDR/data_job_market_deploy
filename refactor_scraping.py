@@ -305,7 +305,7 @@ if __name__ == "__main__":
     
     st = dt.now()
     
-    text_file = open("jobs_list.txt", "r")
+    text_file = open("new_list.txt", "r")
     list1 = text_file.readlines()
     jobs_list = [x.split('\n')[0] for x in list1]
     
