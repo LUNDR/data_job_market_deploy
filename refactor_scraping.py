@@ -46,7 +46,8 @@ def s3_upload(access_key,secret_key, write_path):
 class indeed_scrape_uk:
     def __init__(self,url):
         self.url = url
-        self.res = requests.get(self.url)      
+        self.header = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36" ,'referer':'https://www.google.com/'}
+        self.res = requests.get(self.url, headers=self.header)      
         self.soup = bs4.BeautifulSoup(self.res.content, features="lxml")
 # =============================================================================
 #         self.jobs = []
